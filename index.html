@@ -12,13 +12,22 @@
 </head>
 <body>
     <div class="new-task-form" id="newTaskForm">
-
         <div class="button-fixed">
             <button class="new-task-button" id="new-task">New task</button>
+        </div> <!-- this stays here because of translate -->
+
+        <textarea name="" class="new-task-input" cols="30" rows="10"></textarea>
+        <div class="buttons">
+            <div class="buttons-flex">
+
+                <button id="addBtn" class="button-design">Add task</button>
+                <button id="closeBtn" class="button-design">Close</button>
+            </div>
         </div>
     </div>
     <div class="container">
         <div class="todo">
+                
             
         </div>
         
@@ -54,6 +63,9 @@
         var doneCards = document.getElementById("doneCards");
         var pendingCards = document.getElementById("pendingCards");
 
+        var closeBtn = document.getElementById("closeBtn");
+        var addBtn = document.getElementById("addBtn");
+
         function Task(naziv){
             this.naziv = naziv;
             this.stanje = null;
@@ -88,6 +100,7 @@
                             if(this.naziv === pendingTasks[i].naziv){
                                 doneTasks.unshift(pendingTasks[i]);
                                 pendingTasks.splice(i,1);
+                                
                                 
                                 doneList.innerHTML = "";
                                 pendingList.innerHTML = "";
@@ -139,6 +152,7 @@
             for(var i = 0; i<doneTasks.length; i++){
                 var element = doneTasks[i].napraviSe();
              //   doneTasks[i].checkbox.checked = true;
+                element.style.textDecoration = "line-through"
                 doneList.appendChild(element)
                 
                 
@@ -151,10 +165,36 @@
             doneCards.style.transform = "translateY(150%)"
             pendingCards.style.transform = "translateY(150%)"
 
-            newTaskForm.style.transform = "translateX(-50%) translateY(100px)"
+            newTaskForm.style.transform = "translateX(-50%) translateY(300px)"
 
             
 
+
+        })
+
+        closeBtn.addEventListener("click",()=>{
+            newTaskForm.childNodes[5].value = "";
+
+            doneCards.style.transform = "translateY(0)"
+            pendingCards.style.transform = "translateY(0)"
+
+            newTaskForm.style.transform = "translateX(-50%) translateY(-400px)"
+
+        })
+
+        addBtn.addEventListener("click",() => {
+            pendingTasks.unshift(new Task(newTaskForm.childNodes[5].value))
+            doneList.innerHTML = "";
+            pendingList.innerHTML = "";
+            prikaziPendingTaskove()
+            prikaziDoneTaskove()
+
+            doneCards.style.transform = "translateY(0)"
+            pendingCards.style.transform = "translateY(0)"
+
+            newTaskForm.style.transform = "translateX(-50%) translateY(-400px)"
+
+            newTaskForm.childNodes[5].value = "";
 
         })
 
