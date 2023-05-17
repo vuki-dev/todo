@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="new-task-form" id="newTaskForm">
+
+        <div class="button-fixed">
+            <button class="new-task-button" id="new-task">New task</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="todo">
+            
+        </div>
+        
+        
+        <div class="tasks">
+            
+            <div class="done cards" id="doneCards">
+                <h2>Done tasks &#x2705;</h2>
+                <div id="done">
+
+                </div>
+            </div>
+            <div class="`pending cards" id="pendingCards">
+                <h2>Pending tasks &#x231b;</h2>
+                <div id="pending">
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var doneTasks = [];
+        var pendingTasks = [];
+
+        var doneList = document.getElementById("done");
+        var pendingList = document.getElementById("pending");
+
+        var newTaskBtn = document.getElementById("new-task")
+        var newTaskForm = document.getElementById("newTaskForm");
+
+        var doneCards = document.getElementById("doneCards");
+        var pendingCards = document.getElementById("pendingCards");
+
+        function Task(naziv){
+            this.naziv = naziv;
+            this.stanje = null;
+
+            this.napraviSe = function(){
+                var taskDiv = document.createElement("div");
+                taskDiv.classList.add("task-div");
+
+                var taskNaziv = document.createElement("p");
+                taskNaziv.innerHTML = this.naziv;
+
+
+                var checkbox = document.createElement("input");
+                checkbox.type = "checkbox"
+                checkbox.style.cursor = "pointer";
+                if(this.stanje === true){
+                    checkbox.checked = true;
+                }
+                if(this.stanje === false){
+                    checkbox.checked = false;
+                }
+     
+                taskDiv.appendChild(taskNaziv)
+                taskDiv.appendChild(checkbox)                
+                
+                checkbox.addEventListener("change", ()=>{
+                    this.stanje = checkbox.checked;
+                    
+                    console.log(this.stanje)
+                    if(this.stanje === true){
+                        for(var i = 0; i<pendingTasks.length; i++){
+                            if(this.naziv === pendingTasks[i].naziv){
+                                doneTasks.unshift(pendingTasks[i]);
+                                pendingTasks.splice(i,1);
+                                
+                                doneList.innerHTML = "";
+                                pendingList.innerHTML = "";
+
+                                prikaziDoneTaskove();
+                                prikaziPendingTaskove()
+                                return;
+                            }
+                        }
+                    }
+                    if(this.stanje === false){
+                        for(var i = 0; i<doneTasks.length; i++){
+                            if(this.naziv === doneTasks[i].naziv){
+                                pendingTasks.unshift(doneTasks[i]);
+                                doneTasks.splice(i,1);
+
+                                doneList.innerHTML = "";
+                                pendingList.innerHTML = "";
+
+                                prikaziDoneTaskove();
+                                prikaziPendingTaskove();
+                                return;
+                            }
+                        }
+                    }
+                    
+                })
+                
+                return taskDiv;
+
+            }
+        }
+
+        pendingTasks.push(new Task("Zavrsi ovaj zadatak."))       
+        pendingTasks.push(new Task("Vezbaj Typescript."))
+        
+        
+        
+        
+        
+        function prikaziPendingTaskove(task){
+            for(var i = 0; i<pendingTasks.length; i++){
+                var element = pendingTasks[i].napraviSe();
+                pendingList.appendChild(element);
+            }
+        }
+
+        function prikaziDoneTaskove(){
+            for(var i = 0; i<doneTasks.length; i++){
+                var element = doneTasks[i].napraviSe();
+             //   doneTasks[i].checkbox.checked = true;
+                doneList.appendChild(element)
+                
+                
+            }
+        }
+
+
+        newTaskBtn.addEventListener("click",() => {
+            console.log("klik??")
+            doneCards.style.transform = "translateY(150%)"
+            pendingCards.style.transform = "translateY(150%)"
+
+            newTaskForm.style.transform = "translateX(-50%) translateY(100px)"
+
+            
+
+
+        })
+
+
+        prikaziPendingTaskove()
+        prikaziDoneTaskove()
+        
+        
+        
+
+
+
+    </script>
+    
+</body>
+</html>
