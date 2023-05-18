@@ -10,44 +10,62 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/22e1d1208d.js" crossorigin="anonymous"></script>
+    
 </head>
 <body>
-    <div class="new-task-form" id="newTaskForm">
-        <div class="button-fixed">
-            <button class="new-task-button" id="new-task">New task</button>
-        </div> <!-- this stays here because of translate -->
+    <div id="content">
 
-        <textarea name="" class="new-task-input" cols="30" rows="10"></textarea>
-        <div class="buttons">
-            <div class="buttons-flex">
+    
+        <div class="new-task-form" id="newTaskForm">
+            <div class="button-fixed">
+                <button class="new-task-button" id="new-task">New task</button>
+            </div> <!-- this stays here because of translate -->
 
-                <button id="addBtn" class="button-design">Add task</button>
-                <button id="closeBtn" class="button-design">Close</button>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="todo">
-                
-            
-        </div>
-        
-        
-        <div class="tasks">
-            
-            <div class="done cards" id="doneCards">
-                <h2>Done tasks &#x2705;</h2>
-                <div id="done">
+            <textarea name="" class="new-task-input" cols="30" rows="10"></textarea>
+            <div class="buttons">
+                <div class="buttons-flex">
 
+                    <button id="addBtn" class="button-design">Add task</button>
+                    <button id="closeBtn" class="button-design">Close</button>
                 </div>
             </div>
-            <div class="`pending cards" id="pendingCards">
-                <h2>Pending tasks &#x231b;</h2>
-                <div id="pending">
+        </div>
+        <div class="container">
+            <div class="todo">
+                    
+                
+            </div>
+            
+            
+            <div class="tasks">
+                
+                <div class="done cards" id="doneCards">
+                    <h2>Done tasks &#x2705;</h2>
+                    <div id="done">
+
+                    </div>
+                </div>
+                <div class="`pending cards" id="pendingCards">
+                    <h2>Pending tasks &#x231b;</h2>
+                    <div id="pending">
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="percent-chart" id="percentchart">
+            <div id="chart-text">
+                <span><br></span>
+                <br><span></span>
+            </div>
+            <div id="percentChart">
+                <div id="chart">
 
                 </div>
                 
             </div>
+            <div class="chart-line"></div>
         </div>
     </div>
 
@@ -68,6 +86,8 @@
         var closeBtn = document.getElementById("closeBtn");
         var addBtn = document.getElementById("addBtn");
 
+        
+
         function Task(naziv){
             this.naziv = naziv;
             this.stanje = null;
@@ -75,7 +95,7 @@
             
 
             this.napraviSe = function(){
-                console.log(this.id)
+               // console.log(this.id)
                 var taskDiv = document.createElement("div");
                 taskDiv.classList.add("task-div");
 
@@ -100,15 +120,16 @@
                 delItem.classList.add("del-icon")
 
                 delItem.addEventListener("click",() => {
+                    
                     if(this.stanje === null | this.stanje === false){
                         for(var i=0; i<pendingTasks.length; i++){
-                            console.log("??")
                             if(this.id === pendingTasks[i].id){
-                                console.log(pendingTasks)
                                 pendingTasks.splice(i,1);
-                                console.log(pendingTasks)
                                 prikaziDoneTaskove();
                                 prikaziPendingTaskove();
+
+                                //scaleChart();
+
                                 return;
                             }
                         }
@@ -117,8 +138,12 @@
                         for(var i=0; i<doneTasks.length; i++){
                             if(this.id === doneTasks[i].id){
                                 doneTasks.splice(i,1);
+                                
                                 prikaziDoneTaskove();
                                 prikaziPendingTaskove();
+
+                                //scaleChart();
+                                
                                 return;
                             }
                         }
@@ -138,8 +163,6 @@
                 
                 checkbox.addEventListener("change", ()=>{
                     this.stanje = checkbox.checked;
-                    
-                    console.log(this.stanje)
                     if(this.stanje === true){
                         for(var i = 0; i<pendingTasks.length; i++){
                             if(this.id === pendingTasks[i].id){
@@ -152,6 +175,7 @@
 
                                 prikaziDoneTaskove();
                                 prikaziPendingTaskove()
+                                //scaleChart()
                                 return;
                             }
                         }
@@ -165,16 +189,19 @@
                                 doneList.innerHTML = "";
                                 pendingList.innerHTML = "";
 
+                                //scaleChart()
+
                                 prikaziDoneTaskove();
-                                prikaziPendingTaskove();
+                                prikaziPendingTaskove();                                
                                 return;
                             }
                         }
                     }
                     
                 })
-              //  console.log(pendingTasks)
-               // console.log(doneTasks)
+                //  console.log(pendingTasks)
+                // console.log(doneTasks)
+               calculateTotalTasks()
                 return taskDiv;
 
             }
@@ -196,6 +223,7 @@
                 var element = pendingTasks[i].napraviSe();
                 pendingList.appendChild(element);
             }
+            
         }
 
         function prikaziDoneTaskove(){
@@ -205,9 +233,8 @@
              //   doneTasks[i].checkbox.checked = true;
                 element.childNodes[0].style.textDecoration = "line-through"
                 doneList.appendChild(element)
-                
-                
             }
+            
         }
 
 
@@ -235,23 +262,102 @@
 
         addBtn.addEventListener("click",() => {
             pendingTasks.unshift(new Task(newTaskForm.childNodes[5].value))
+            // scaleChart()
             doneList.innerHTML = "";
             pendingList.innerHTML = "";
             prikaziPendingTaskove()
             prikaziDoneTaskove()
-
+    
             doneCards.style.transform = "translateY(0)"
             pendingCards.style.transform = "translateY(0)"
 
             newTaskForm.style.transform = "translateX(-50%) translateY(-400px)"
 
             newTaskForm.childNodes[5].value = "";
+            console.log(completionPercentage())
 
         })
 
 
         prikaziPendingTaskove()
         prikaziDoneTaskove()
+        
+        function calculateTotalTasks(){
+            var totalTasks = pendingTasks.length + doneTasks.length;
+            
+            return totalTasks;
+        }
+
+        function completionPercentage(){
+            var totalTasks = calculateTotalTasks();
+            var percentage = (doneTasks.length/totalTasks)*100
+            if(doneTasks.length === 0){
+                percentage = 0;
+            }
+            
+            return percentage;
+        }
+
+        window.addEventListener("scroll",() => {
+            //console.log(window.scrollY)
+            if(window.scrollY > 300 && window.scrollY < 600){
+                scaleChart()
+                console.log("??")
+                percentChart.style.transition = "all .8s ease"
+                percentChart.style.opacity = "100%"
+                percentChart.style.transform = "translateY(0)"
+            }
+            if(window.scrollY < 250){
+                percentChart.style.transition = "all .5s ease"
+                percentChart.style.opacity = "0"
+                percentChart.style.transform = "translateY(40px)"
+            }
+
+        })
+
+        var chart = document.getElementById("chart");
+        var chartParent = document.getElementById("percentChart")
+        var percentChart = document.getElementById("percentchart")
+
+        percentChart.style.opacity = "0"
+        percentChart.style.transform = "translateY(40px)"
+        
+        
+        function scaleChart(){
+            if(doneTasks.length === 0){
+                chart.style.height = 0;
+            }
+            chart.style.transition = "height .5s ease"
+            chart.style.height =  completionPercentage()+"%"
+            console.log(completionPercentage())
+
+            var chartText = document.getElementById("chart-text");
+            chartText.childNodes[1].innerHTML = "Your task completion<br> is: " + parseInt(completionPercentage()) + "%.";
+            
+            var gratsText = null;
+
+            if(parseInt(completionPercentage())>50){
+                gratsText = "Awesome!"
+            }
+            if(parseInt(completionPercentage())<=50){
+                gratsText = "Not bad!"
+            }
+            if(parseInt(completionPercentage())===0){
+                gratsText = "You've done nothing <br> today!"
+            }
+            if(parseInt(completionPercentage())===100){
+                gratsText = "Congratulations! <br> You've finished all <br> your tasks!"
+            }
+
+            chartText.childNodes[4].innerHTML = gratsText;
+
+        }
+
+        console.log(document.getElementById("chart-text").childNodes)
+        //scaleChart()
+
+
+
 
         // test git commit
         // test git commit #2 
