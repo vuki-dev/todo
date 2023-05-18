@@ -52,6 +52,7 @@
     </div>
 
     <script>
+        var uID = 0;
         var doneTasks = [];
         var pendingTasks = [];
 
@@ -70,8 +71,11 @@
         function Task(naziv){
             this.naziv = naziv;
             this.stanje = null;
+            this.id = uID++
+            
 
             this.napraviSe = function(){
+                console.log(this.id)
                 var taskDiv = document.createElement("div");
                 taskDiv.classList.add("task-div");
 
@@ -99,7 +103,7 @@
                     if(this.stanje === null | this.stanje === false){
                         for(var i=0; i<pendingTasks.length; i++){
                             console.log("??")
-                            if(this.naziv === pendingTasks[i].naziv){
+                            if(this.id === pendingTasks[i].id){
                                 console.log(pendingTasks)
                                 pendingTasks.splice(i,1);
                                 console.log(pendingTasks)
@@ -111,7 +115,7 @@
                     }
                     if(this.stanje === true){
                         for(var i=0; i<doneTasks.length; i++){
-                            if(this.naziv === doneTasks[i].naziv){
+                            if(this.id === doneTasks[i].id){
                                 doneTasks.splice(i,1);
                                 prikaziDoneTaskove();
                                 prikaziPendingTaskove();
@@ -138,7 +142,7 @@
                     console.log(this.stanje)
                     if(this.stanje === true){
                         for(var i = 0; i<pendingTasks.length; i++){
-                            if(this.naziv === pendingTasks[i].naziv){
+                            if(this.id === pendingTasks[i].id){
                                 doneTasks.unshift(pendingTasks[i]);
                                 pendingTasks.splice(i,1);
                                 
@@ -154,7 +158,7 @@
                     }
                     if(this.stanje === false){
                         for(var i = 0; i<doneTasks.length; i++){
-                            if(this.naziv === doneTasks[i].naziv){
+                            if(this.id === doneTasks[i].id){
                                 pendingTasks.unshift(doneTasks[i]);
                                 doneTasks.splice(i,1);
 
@@ -169,11 +173,19 @@
                     }
                     
                 })
-                
+              //  console.log(pendingTasks)
+               // console.log(doneTasks)
                 return taskDiv;
 
             }
         }
+
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
+        pendingTasks.push(new Task("lorem ipsum dolor sit"))
 
         
         
