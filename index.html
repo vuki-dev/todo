@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/22e1d1208d.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="new-task-form" id="newTaskForm">
@@ -87,9 +88,49 @@
                 if(this.stanje === false){
                     checkbox.checked = false;
                 }
+
+
+                var delItem = document.createElement("i");
+                delItem.classList.add("fa-trash-can")
+                delItem.classList.add("fa-solid")
+                delItem.classList.add("del-icon")
+
+                delItem.addEventListener("click",() => {
+                    if(this.stanje === null | this.stanje === false){
+                        for(var i=0; i<pendingTasks.length; i++){
+                            console.log("??")
+                            if(this.naziv === pendingTasks[i].naziv){
+                                console.log(pendingTasks)
+                                pendingTasks.splice(i,1);
+                                console.log(pendingTasks)
+                                prikaziDoneTaskove();
+                                prikaziPendingTaskove();
+                                return;
+                            }
+                        }
+                    }
+                    if(this.stanje === true){
+                        for(var i=0; i<doneTasks.length; i++){
+                            if(this.naziv === doneTasks[i].naziv){
+                                doneTasks.splice(i,1);
+                                prikaziDoneTaskove();
+                                prikaziPendingTaskove();
+                                return;
+                            }
+                        }
+                    }
+                    
+                })
+                
+
+                rightDiv = document.createElement("div");
+                rightDiv.classList.add("taskRightDiv")
+
+                rightDiv.appendChild(checkbox)
+                rightDiv.appendChild(delItem)
      
                 taskDiv.appendChild(taskNaziv)
-                taskDiv.appendChild(checkbox)                
+                taskDiv.appendChild(rightDiv)                
                 
                 checkbox.addEventListener("change", ()=>{
                     this.stanje = checkbox.checked;
@@ -134,18 +175,11 @@
             }
         }
 
-        pendingTasks.push(new Task("Zavrsi ovaj zadatak."))       
-        pendingTasks.push(new Task("Vezbaj Typescript."))
-        pendingTasks.push(new Task("Vezbaj Typescript."))
-        pendingTasks.push(new Task("Vezbaj Typescript."))
-        pendingTasks.push(new Task("Vezbaj Typescript."))
-        pendingTasks.push(new Task("Vezbaj Typescript."))
-        
-        
         
         
         
         function prikaziPendingTaskove(task){
+            pendingList.innerHTML = "";
             for(var i = 0; i<pendingTasks.length; i++){
                 var element = pendingTasks[i].napraviSe();
                 pendingList.appendChild(element);
@@ -153,10 +187,11 @@
         }
 
         function prikaziDoneTaskove(){
+            doneList.innerHTML = "";
             for(var i = 0; i<doneTasks.length; i++){
                 var element = doneTasks[i].napraviSe();
              //   doneTasks[i].checkbox.checked = true;
-                element.style.textDecoration = "line-through"
+                element.childNodes[0].style.textDecoration = "line-through"
                 doneList.appendChild(element)
                 
                 
