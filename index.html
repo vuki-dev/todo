@@ -30,13 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="todo">
-                    
-                
-            </div>
-            
-            
+        <div class="container"> 
             <div class="tasks">
                 
                 <div class="done cards" id="doneCards">
@@ -71,6 +65,14 @@
 
     <script>
         var uID = 0;
+        uID = parseInt(localStorage.getItem("uID"))
+        if(isNaN(uID)){
+            uID = 0;
+        }
+        localStorage.setItem("uID",uID);
+        
+        console.log(uID)
+        
         var doneTasks = [];
         var pendingTasks = [];
 
@@ -91,10 +93,12 @@
         function Task(naziv){
             this.naziv = naziv;
             this.stanje = null;
-            this.id = uID++
+            this.id = uID++;
+            localStorage.setItem("uID",uID)
             
 
             this.napraviSe = function(){
+                
                // console.log(this.id)
                 var taskDiv = document.createElement("div");
                 taskDiv.classList.add("task-div");
@@ -120,6 +124,18 @@
                 delItem.classList.add("del-icon")
 
                 delItem.addEventListener("click",() => {
+                    for(var i=0; i<localStorage.length; i++){
+                        var tempObj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+
+                        console.log(tempObj)
+                        console.log(this.id)
+                        
+                        if(this.id === tempObj.id){
+                            
+                            localStorage.removeItem(localStorage.key(i))
+                            break;
+                        }
+                    }
                     
                     if(this.stanje === null | this.stanje === false){
                         for(var i=0; i<pendingTasks.length; i++){
@@ -166,6 +182,10 @@
                     if(this.stanje === true){
                         for(var i = 0; i<pendingTasks.length; i++){
                             if(this.id === pendingTasks[i].id){
+                                
+                                console.log(localStorage.setItem("task"+this.id,JSON.stringify(pendingTasks[i])))
+
+
                                 doneTasks.unshift(pendingTasks[i]);
                                 pendingTasks.splice(i,1);
                                 
@@ -183,6 +203,9 @@
                     if(this.stanje === false){
                         for(var i = 0; i<doneTasks.length; i++){
                             if(this.id === doneTasks[i].id){
+
+                                localStorage.setItem("task"+this.id, JSON.stringify(doneTasks[i]))
+
                                 pendingTasks.unshift(doneTasks[i]);
                                 doneTasks.splice(i,1);
 
@@ -207,13 +230,8 @@
             }
         }
 
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-        pendingTasks.push(new Task("lorem ipsum dolor sit"))
-
+        let prototypeObj = new Task()
+        //console.log(prototypeObj)
         
         
         
@@ -261,7 +279,10 @@
         })
 
         addBtn.addEventListener("click",() => {
-            pendingTasks.unshift(new Task(newTaskForm.childNodes[5].value))
+            var task = new Task(newTaskForm.childNodes[5].value)
+            pendingTasks.unshift(task)
+            console.log(task)
+            localStorage.setItem("task"+task.id,JSON.stringify(task))
             // scaleChart()
             doneList.innerHTML = "";
             pendingList.innerHTML = "";
@@ -274,13 +295,13 @@
             newTaskForm.style.transform = "translateX(-50%) translateY(-400px)"
 
             newTaskForm.childNodes[5].value = "";
-            console.log(completionPercentage())
+            
 
         })
 
 
-        prikaziPendingTaskove()
-        prikaziDoneTaskove()
+       // prikaziPendingTaskove()
+       // prikaziDoneTaskove()
         
         function calculateTotalTasks(){
             var totalTasks = pendingTasks.length + doneTasks.length;
@@ -353,20 +374,54 @@
 
         }
 
-        console.log(document.getElementById("chart-text").childNodes)
-        //scaleChart()
+        // LOCAL STORAGE =========
 
-
-
-
-        // test git commit
-        // test git commit #2 
-        // test git commit #3 and #4
-        
-        
         
 
+        function retStorage(){
+            if(localStorage.length === 0){
+                return;
+            }
+            for(var i=0; i<localStorage.length; i++){
+                //console.log(localStorage.key(i))
+                if(localStorage.key(i) === "uID"){
+                    continue;
+                }
+                
+                var storageObj = JSON.parse(localStorage.getItem(localStorage.key(i)))
+                
+                
 
+                var inherObj = Object.create(prototypeObj)
+                
+                inherObj.id = storageObj.id;
+                inherObj.naziv = storageObj.naziv;
+                inherObj.stanje = storageObj.stanje;
+
+                console.log(inherObj)
+                console.log("inherObj instanceof Task",inherObj instanceof Task)
+                
+                
+                if(storageObj.stanje){
+                    doneTasks.unshift(inherObj);
+                }
+                else{
+                    pendingTasks.unshift(inherObj);
+                }
+            }
+            
+            console.log(doneTasks)
+            console.log(pendingTasks)
+        }
+
+        retStorage()
+
+        prikaziDoneTaskove();
+        prikaziPendingTaskove();
+
+    
+
+        //localStorage.clear()
 
     </script>
     
